@@ -19,5 +19,8 @@
   "homepage": "https://github.com/mauri1789/aws-testsuite#readme",
   "devDependencies": {
     "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.939.0"
   }
 }
