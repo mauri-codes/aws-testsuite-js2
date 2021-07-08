@@ -15,8 +15,10 @@ const SuccessFulTest: (id: string) => TestResult =
 
 class Test {
    id: string
-   constructor(id: string) {
+   order: number
+   constructor(id: string, order: number = 0) {
       this.id = id
+      this.order = order
    }
    async run():Promise<TestResult> {
       return {
@@ -32,16 +34,36 @@ class TestGroup {
       this.id = id
       this.tests = tests
    }
-   async run() {
-      const testPromises = this.tests.map(test => test.run())
-      let result = await Promise.all(testPromises)
-      this.tests.forEach((test, index) => {
-         result[index].id = test.id
+   getSortedGroupByExecution(): Test[][] {
+      let testCount = this.tests.length
+      let sortedTestGroup: Test[][] = []
+      let subGroup: Test[] = []
+      this.tests.sort(sortByOrder)
+      this.tests.forEach((test, ind) => {
+         subGroup.push(test)
+         if (ind + 1 === testCount || this.tests[ind+1].order != test.order) {
+            sortedTestGroup.push(subGroup)
+            subGroup = []
+         }
       })
+      return sortedTestGroup
+      function sortByOrder(test1: Test, test2: Test) {
+         return test1.order - test2.order
+      }
+   }
+   async run() {
+      let executions = this.getSortedGroupByExecution()
+      let results: TestResult[] = []
+      for (const group of executions) {
+         results = [...results, ...(await Promise.all(group.map(test => test.run())))]
+         console.log(results); 
+      }
+      console.log(results);
+
       return {
          id: this.id,
-         success: result.every(test => test.success),
-         tests: result
+         success: results.every(test => test.success),
+         tests: results
       }
    }
 }
