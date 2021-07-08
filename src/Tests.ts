@@ -56,9 +56,7 @@ class TestGroup {
       let results: TestResult[] = []
       for (const group of executions) {
          results = [...results, ...(await Promise.all(group.map(test => test.run())))]
-         console.log(results); 
       }
-      console.log(results);
 
       return {
          id: this.id,
