@@ -3,7 +3,8 @@ import AWS, {
    Lambda,
    IAM,
    STS,
-   S3
+   S3,
+   CodeBuild
 } from "aws-sdk"
 
 export interface AWSKeys {
@@ -17,15 +18,16 @@ export interface Environment {
    credentials?: AWSKeys
 }
 
-export type AWSService = "S3" | "CloudFront" | "IAM" | "Lambda"
+export type AWSService = "S3" | "CloudFront" | "IAM" | "Lambda" | "CodeBuild"
 
 const clients: {
    [key in AWSService]: () => any
 } = {
-   "S3": () => new S3(),
-   "CloudFront": () => new CloudFront(),
-   "IAM": () => new IAM(),
-   "Lambda": () => new Lambda()
+   S3: () => new S3(),
+   CloudFront: () => new CloudFront(),
+   IAM: () => new IAM(),
+   Lambda: () => new Lambda(),
+   CodeBuild: () => new CodeBuild()
 }
 
 interface EnvironmentConfig {
